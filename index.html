@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Validação de Certificado - Decole Educacional</title>
-  <link rel="icon" type="image/png" href="favicon-decole.png" />
+  <link rel="icon" type="image/png" href="favicondecole.png" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     body {
@@ -15,23 +15,29 @@
       color: #ffffff;
       text-align: center;
     }
+
     header {
       background-color: #1a1919dc;
       padding: 40px 20px;
       border-bottom: 3px solid #777c7b;
-header img {
-  height: 200px;
-  margin: 0 auto 15px auto;
-}
+    }
+
+    header img {
+      height: 300px;
+      margin: 0 auto 25px auto;
+      display: block;
+    }
 
     h1 {
       color: #ffffff;
       font-size: 36px;
       margin: 10px 0;
     }
+
     p {
       color: #cccccc;
     }
+
     input[type="text"] {
       padding: 12px;
       width: 90%;
@@ -41,6 +47,7 @@ header img {
       border: 2px solid #726d6d;
       font-size: 16px;
     }
+
     button {
       margin-top: 15px;
       padding: 10px 14px;
@@ -52,30 +59,38 @@ header img {
       cursor: pointer;
       font-size: 16px;
     }
+
     button:hover {
       background-color: #974b08;
     }
+
     #resultado-validacao {
       margin: 50px auto;
       max-width: 600px;
     }
+
     footer {
       background-color: #6470706c;
       color: rgb(197, 2, 2);
       padding: 25px;
       margin-top: 60px;
     }
+
     footer a {
       color: #dfcdbd;
       margin: 0 12px;
       text-decoration: none;
     }
+
     @media (max-width: 600px) {
+      header img {
+        height: 180px;
+      }
       input[type="text"] {
         width: 95%;
       }
       h1 {
-        font-size: 26px;
+        font-size: 24px;
       }
     }
   </style>
@@ -85,9 +100,9 @@ header img {
     <img src="decole-logo.png" alt="Logo Decole Educacional">
     <h1>Ambiente de Validação de Certificado</h1>
     <p>Insira sua chave única do certificado para validar:</p>
-    <input type="text" id="input-chave" placeholder="Ex: X7D2Q9" onkeypress="if(event.key === 'Enter') validarCertificado()">
+    <input type="text" id="input-chave" placeholder="Ex: abc123xyz" onkeypress="if(event.key === 'Enter') validarCertificado()">
     <br>
-    <button onclick="validarCertificado()">Validar</button>
+    <button id="btn-validar" onclick="validarCertificado()">Validar</button>
   </header>
 
   <div id="resultado-validacao" aria-live="polite"></div>
@@ -124,7 +139,7 @@ header img {
       try {
         const res = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vRvw9IK8kaYOMlzbn7dS6N6LqpHJRhzgvf0LYoi19V1WCC1fxZD9-dmaCYFaALVGwyciLrnV9Hsx7MA/pub?gid=0&single=true&output=csv");
         const csv = await res.text();
-        const linhas = csv.split("\n").slice(1);
+        const linhas = csv.split("\\n").slice(1);
 
         let encontrado = false;
 
