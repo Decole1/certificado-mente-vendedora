@@ -117,6 +117,16 @@
   </footer>
 
   <script>
+    function parseCSVRow(row) {
+      const regex = /(?:\"([^\"]*(?:\"\"[^\"]*)*)\")|([^,]+)/g;
+      const result = [];
+      let match;
+      while (match = regex.exec(row)) {
+        result.push(match[1]?.replace(/""/g, "\"") ?? match[2]);
+      }
+      return result;
+    }
+
     async function validarCertificado() {
       const chave = document.getElementById('input-chave').value.trim();
       const resultado = document.getElementById('resultado-validacao');
@@ -125,26 +135,24 @@
         resultado.innerHTML = `
           <div style="padding: 15px; background: #ffe6e6; border: 2px solid #e57373; border-radius: 10px; color: #000;">
             <h2 style="color: #c62828;">❌ Por favor, insira uma chave válida</h2>
-          </div>
-        `;
+          </div>`;
         return;
       }
 
       resultado.innerHTML = `
         <div style="padding: 30px; background: #333; border: 2px solid #888; border-radius: 18px;">
           <h3 style="color: #ddd;">🔎 Verificando seu certificado...</h3>
-        </div>
-      `;
+        </div>`;
 
       try {
         const res = await fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vRvw9IK8kaYOMlzbn7dS6N6LqpHJRhzgvf0LYoi19V1WCC1fxZD9-dmaCYFaALVGwyciLrnV9Hsx7MA/pub?gid=0&single=true&output=csv");
         const csv = await res.text();
-        const linhas = csv.split("\\n").slice(1);
+        const linhas = csv.split("\n").slice(1);
 
         let encontrado = false;
 
         for (let linha of linhas) {
-          const [nome, curso, data_emissao, chave_planilha] = linha.trim().split(",");
+          const [nome, curso, data_emissao, chave_planilha] = parseCSVRow(linha.trim());
           if (chave_planilha === chave) {
             confetti();
             resultado.innerHTML = `
@@ -159,8 +167,7 @@
                 <button onclick="baixarCertificado('${chave}')" style="margin-top: 25px; padding: 12px 20px; font-size: 16px; border-radius: 30px; background-color: #f57a07; color: white; border: none; cursor: pointer;">
                   📥 Baixar Certificado
                 </button>
-              </div>
-            `;
+              </div>`;
             resultado.scrollIntoView({ behavior: 'smooth' });
             encontrado = true;
             break;
@@ -172,16 +179,14 @@
             <div style="padding: 20px; background: #ffe6e6; border: 2px solid #e57373; border-radius: 12px; color: #000;">
               <h2 style="color: #c62828;">❌ Certificado não encontrado</h2>
               <p>Verifique a chave digitada ou entre em contato com o emissor.</p>
-            </div>
-          `;
+            </div>`;
         }
       } catch (e) {
         resultado.innerHTML = `
           <div style="padding: 20px; background: #fffde7; border: 2px solid #fdd835; border-radius: 12px; color: #000;">
             <h2 style="color: #f9a825;">⚠️ Erro ao validar</h2>
             <p>Tente novamente em instantes.</p>
-          </div>
-        `;
+          </div>`;
       }
     }
 
